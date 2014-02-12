@@ -1,1 +1,5 @@
 *.meta
+AnimAvatar.v11.suo
+obj
+Temp
+bin
