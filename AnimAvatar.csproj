@@ -50,6 +50,7 @@
     <Compile Include="AnimAvatar\ARTParser.cs" />
     <Compile Include="AnimAvatar\AvatarAnimator.cs" />
     <Compile Include="AnimAvatar\Bone.cs" />
+    <Compile Include="AnimAvatar\Transformer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="AnimAvatar\Materials\ZombieLowRes_Texture_2k.mat" />

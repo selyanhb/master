@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace Parser
+namespace AnimAvatar
 {
     public class Bone
     {
@@ -12,6 +12,18 @@ namespace Parser
         public Vector3 VectPos;
         public Vector3 VectRot;
         public float[,] Mat { get; set; }
+
+		public Bone(int number){
+			Number = number;
+			VectPos = new Vector3 ();
+			if (number < 4) {
+				VectRot = new Vector3 (0f, 0f, 1f);
+			} else if (number < 12) {
+				VectRot = new Vector3 (1f, 0f, 0f);
+			} else {
+				VectRot = new Vector3 (-1f, 0f, 0f);
+			}
+		}
 
         public string getString()
         {

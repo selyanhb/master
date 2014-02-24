@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
 
-namespace Parser
+namespace AnimAvatar
 {
     public class ARTParser
     {
@@ -41,7 +41,6 @@ namespace Parser
                         line = tr.ReadLine();
                     }
                     frame = parseFrame(line);
-                    Console.WriteLine(line + " : " + frame);
                 }
                 catch (Exception e)
                 {
@@ -53,7 +52,6 @@ namespace Parser
                 try
                 {
                     double time = parseTime(line);
-                    Console.WriteLine(line + " : " + time);
                 }
                 catch (Exception e)
                 {
@@ -69,10 +67,6 @@ namespace Parser
                 try
                 {
                     listesBones.Add(frame, parseData(line));
-                    for (int i = 0; i < listesBones[frame].Count; i++)
-                    {
-                        Console.WriteLine(listesBones[frame][i].getString());
-                    }
                 }
                 catch (Exception e)
                 {
@@ -100,10 +94,6 @@ namespace Parser
         {
             Match m = times.Match(line);
             string value = m.Groups[1].Value;
-            if (value.Contains("."))
-            {
-                value = value.Replace(".", ",");
-            }
             double result = Double.Parse(value);
             return result;
         }
@@ -121,7 +111,7 @@ namespace Parser
 
             for (int i = 2; i < liste.Length; i++)
             {
-                Bone bone = new Bone();
+                Bone bone = new Bone(0);
 
                 string inputBoneNumber = liste[i]; // "0 1.000]"
                 bone.Number = Int32.Parse(inputBoneNumber.Split(' ')[0]);
@@ -139,10 +129,6 @@ namespace Parser
                 for (int j = 0; j < 6; j++)
                 {
                     string value = stringBone6dVect[j];
-                    if (value.Contains("."))
-                    {
-                        value = value.Replace(".", ",");
-                    }
                     boneVect[j] = float.Parse(value);
                 }
 
@@ -164,10 +150,6 @@ namespace Parser
                     for (int k = 0; k < 3; k++)
                     {
                         string value = stringBoneMat[3*j+k];
-                        if (value.Contains("."))
-                        {
-                            value = value.Replace(".", ",");
-                        }
                         boneMat[j, k] = float.Parse(value);
                     }
                 }

@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Parser;
+using AnimAvatar;
 using System.Collections.Generic;
 using UnityEngine;
 
