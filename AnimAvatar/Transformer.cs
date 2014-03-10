@@ -12,12 +12,13 @@ namespace AnimAvatar
 		private Dictionary<Int32, List<Bone>> listesBones;
 
 		public int initFrame { get; set; }
+		private Vector3 initPos;
 
 		public Transformer (string filename)
 		{
 			listesBones = ARTParser.parse (filename);
 			initFrame = listesBones.Keys.Min ();
-
+			initPos = listesBones [initFrame] [0].VectPos;
 		}
 
 		public List<Quaternion> getBoneTransfo (int frame)
@@ -35,29 +36,40 @@ namespace AnimAvatar
 			return listeBoneTrans;
 		}
 
+		public Vector3 getPosition (int frame)
+		{
+			if (!listesBones.Keys.Contains (frame)) {
+				return new Vector3();
+			}
 
-		/*
-	         * Doesn't give the correct result
-	         */ 
+			Vector3 pos = listesBones[frame][0].VectPos - initPos;
+
+			return new Vector3 (-pos.x/500f, pos.z/500f, -pos.y/500f);
+		}
+	
+
 		private Quaternion transformQuaternion (Bone bone)
 		{
 
-			Quaternion QuatAroundX = Quaternion.AngleAxis (-bone.VectRot.x, new Vector3 (-1f, 0f, 0f));
-			Quaternion QuatAroundY = Quaternion.AngleAxis (bone.VectRot.y, new Vector3 (0f, 0f, 1f));
-			Quaternion QuatAroundZ = Quaternion.AngleAxis (bone.VectRot.z, new Vector3 (0f, -1f, 0f));
-			if (bone.Number == 5 || bone.Number == 7 || bone.Number == 9 || bone.Number == 11) {
-				QuatAroundX = Quaternion.AngleAxis (-bone.VectRot.x, new Vector3 (-1f, 0f, 0f));
-				QuatAroundY = Quaternion.AngleAxis (bone.VectRot.y, new Vector3 (0f, 0f, -1f));
-				QuatAroundZ = Quaternion.AngleAxis (bone.VectRot.z, new Vector3 (0f, -1f, 0f));
-			}
+			Quaternion QuatAroundX = Quaternion.AngleAxis (bone.VectRot.x, new Vector3 (1f, 0f, 0f));
+			Quaternion QuatAroundY = Quaternion.AngleAxis (bone.VectRot.y, QuatAroundX*(new Vector3 (0f, 0f, 1f)));
+			Quaternion QuatAroundZ = Quaternion.AngleAxis (bone.VectRot.z, QuatAroundY*QuatAroundX*(new Vector3 (0f, -1f, 0f)));
+			if (bone.number == 5 || bone.Number == 7 || bone.Number == 9 || bone.Number == 11) {
+				QuatAroundX = Quaternion.AngleAxis (bone.VectRot.x, new Vector3 (1f, 0f, 0f));
+				QuatAroundY = Quaternion.AngleAxis (bone.VectRot.y, QuatAroundX*(new Vector3 (0f, 0f, -1f)));
+				QuatAroundZ = Quaternion.AngleAxis (bone.VectRot.z, QuatAroundY*QuatAroundX*(new Vector3 (0f, -1f, 0f)));
+				Quaternion QuatInverser = Quaternion.AngleAxis (180, QuatAroundZ*QuatAroundY*QuatAroundX*(new Vector3 (0f, 0f, 1f)));
 
+				return  QuatInverser*QuatAroundZ*QuatAroundY * QuatAroundX;
+			}
 			return QuatAroundZ * QuatAroundY * QuatAroundX;
 		}
 
 
 		/*
-	         * Method found on a Unity Forum, not sure it works.
-	         */
+
+		/*
+	     * Method found on a Unity Forum, not sure it works.
 		public static Quaternion QuaternionFromMatrix (float[,] m)
 		{ 
 			Vector3 column1 = new Vector3 (m [0, 0], m [0, 1], m [0, 2]);
@@ -109,7 +121,6 @@ namespace AnimAvatar
 
 
 			
-		/*
 			public List<float[,]> getBoneMat (int frame)
 			{
 				if (!listesBones.Keys.Contains (frame)) {

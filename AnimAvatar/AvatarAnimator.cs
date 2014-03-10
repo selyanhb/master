@@ -17,35 +17,30 @@ public class AvatarAnimator : MonoBehaviour
     private int initframe;
     private Transformer transformer;
     private TextWriter tr;
+	private Vector3 initPosition;
 
     // Use this for initialization
     public void Start()
     {
-        try
-        {
-            tr = new StreamWriter(@"output.txt");
-        }
-        catch (Exception e)
-        {
-            throw new Exception("Error while opening file : " + e.Message);
-        }
         anim = GetComponent<Animator>();
         anim.rootPosition = new Vector3();
         anim.rootRotation = new Quaternion();
         transformer = new Transformer(filename);
         frame = transformer.initFrame;
+		initPosition = anim.GetBoneTransform (HumanBodyBones.Hips).position;
     }
 
     // Update is called once per frame
     public void Update()
     {
-//      List<Vector3> listeBoneCoord = transformer.getBoneRot(frame);
+//      List<Vector3> listeBoneCoord = transformer.getBoneOrient(frame);
 //		List<float[,]> listeBoneMat = transformer.getBoneMat(frame);
 		List<Quaternion> listeBoneTrans = transformer.getBoneTransfo (frame);
-        if(listeBoneTrans != null)
+		Vector3 position = transformer.getPosition (frame);
+		if(listeBoneTrans != null)
         {
             List<HumanBodyBones> listeBone = initBoneList();
-			transformByQuaternion(listeBone, listeBoneTrans);
+			transformByQuaternion(listeBone, listeBoneTrans, position);
 //          transformByBoneOrientation(listeBone, listeBoneCoord);
 //			transformByMat(listeBone, listeBoneMat);
         }
@@ -53,17 +48,22 @@ public class AvatarAnimator : MonoBehaviour
         frame++;
     }
 
-	public void transformByQuaternion(List<HumanBodyBones> listeBone, List<Quaternion> listeBoneTrans){
+	public void transformByQuaternion(List<HumanBodyBones> listeBone, List<Quaternion> listeBoneTrans, Vector3 position){
 		if (listeBone.Count != listeBoneTrans.Count)
 		{
 			throw new Exception("mismatched numbers of Bones and BonesTrans");
 		}
-		
+
+		Transform transform = anim.GetBoneTransform (listeBone [0]);
+		transform.position = initPosition + position;
+
 		for (int i = 1; i < 20; i++) {
-			Transform transform = anim.GetBoneTransform (listeBone [i]);
+			transform = anim.GetBoneTransform (listeBone [i]);
 			transform.rotation = listeBoneTrans [i];
 		}
 	}
+
+	/*
 
     public void transformByBoneOrientation(List<HumanBodyBones> listeBone, List<Vector3> listeBoneCoord)
     {
@@ -79,9 +79,7 @@ public class AvatarAnimator : MonoBehaviour
 				Vector3 precVector = transform.up;
 				//tr.WriteLine("["+i+"] Loaded transformation :"+ anim.GetBoneTransform(listeBone[i]).rotation.x + "  "+ anim.GetBoneTransform(listeBone[i]).rotation.y+" "+anim.GetBoneTransform(listeBone[i]).rotation.z);
 				//tr.WriteLine("["+i+"] PrecVector :"+precVector.ToString());
-				tr.WriteLine("["+i+"] NewVector :"+listeBoneCoord[i].ToString());
-				transform.rotation = Quaternion.Euler(listeBoneCoord[i]);
-				//transform.rotation = Quaternion.FromToRotation(precVector, listeBoneCoord[i])*transform.rotation;
+				transform.rotation = Quaternion.FromToRotation(precVector, listeBoneCoord[i])*transform.rotation;
 				//tr.WriteLine("["+i+"] Uploaded transformation :"+ transform.rotation.x + "  "+ transform.rotation.y+" "+transform.rotation.z);
         }
     }
@@ -96,12 +94,10 @@ public class AvatarAnimator : MonoBehaviour
 		for (int i = 1; i < 2; i++)
 		{
 			Transform transform = anim.GetBoneTransform(listeBone[i]);
-			tr.WriteLine("["+i+"] Loaded transformation :"+ anim.GetBoneTransform(listeBone[i]).rotation.x + "  "+ anim.GetBoneTransform(listeBone[i]).rotation.y+" "+anim.GetBoneTransform(listeBone[i]).rotation.z);
 			transform.rotation = QuaternionFromMatrix(listeBoneMat[i]);
-			tr.WriteLine("["+i+"] Uploaded transformation :"+ transform.rotation.x + "  "+ transform.rotation.y+" "+transform.rotation.z);
 		}
 	}
-
+*/
 
     List<HumanBodyBones> initBoneList()
     {
@@ -149,9 +145,11 @@ public class AvatarAnimator : MonoBehaviour
 		listeBone.Insert(19, HumanBodyBones.RightFoot);
         return listeBone;
     }
+
+
     /*
      * Method found on a Unity Forum, not sure it works.
-     */
+
 	public static Quaternion QuaternionFromMatrix(float[,] m) 
 	{ 
 		Vector3 forward = new Vector3 (m [0, 0], m [1, 0], m [2, 0]);
@@ -159,4 +157,5 @@ public class AvatarAnimator : MonoBehaviour
 		return Quaternion.LookRotation(forward, upward);
 	}
 
+  */
 }
