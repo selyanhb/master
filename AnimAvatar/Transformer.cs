@@ -54,7 +54,7 @@ namespace AnimAvatar
 			Quaternion QuatAroundX = Quaternion.AngleAxis (bone.VectRot.x, new Vector3 (1f, 0f, 0f));
 			Quaternion QuatAroundY = Quaternion.AngleAxis (bone.VectRot.y, QuatAroundX*(new Vector3 (0f, 0f, 1f)));
 			Quaternion QuatAroundZ = Quaternion.AngleAxis (bone.VectRot.z, QuatAroundY*QuatAroundX*(new Vector3 (0f, -1f, 0f)));
-			if (bone.number == 5 || bone.Number == 7 || bone.Number == 9 || bone.Number == 11) {
+			if (bone.Number == 5 || bone.Number == 7 || bone.Number == 9 || bone.Number == 11) {
 				QuatAroundX = Quaternion.AngleAxis (bone.VectRot.x, new Vector3 (1f, 0f, 0f));
 				QuatAroundY = Quaternion.AngleAxis (bone.VectRot.y, QuatAroundX*(new Vector3 (0f, 0f, -1f)));
 				QuatAroundZ = Quaternion.AngleAxis (bone.VectRot.z, QuatAroundY*QuatAroundX*(new Vector3 (0f, -1f, 0f)));
